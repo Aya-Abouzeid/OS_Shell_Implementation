@@ -1,0 +1,102 @@
+# depslib dependency file v1.0
+1507075499 source:c:\users\aya_a_000\lab1\command_parser.c
+	"command_parser.h"
+	<stdio.h>
+	"stdlib.h"
+	<string.h>
+	"environment.h"
+
+1506757947 c:\users\aya_a_000\lab1\command_parser.h
+
+1506757868 source:c:\users\aya_a_000\lab1\environment.cpp
+	"environment.h"
+
+1507052657 c:\users\aya_a_000\lab1\environment.h
+
+1507072056 source:c:\users\aya_a_000\lab1\file_processing.c
+	"file_processing.h"
+	"stdio.h"
+
+1506760456 c:\users\aya_a_000\lab1\file_processing.h
+	"stdio.h"
+
+1507072856 source:c:\users\aya_a_000\lab1\main.c
+	"stdio.h"
+	"stdlib.h"
+	"file_processing.h"
+	<string.h>
+	"environment.h"
+
+1506758109 source:c:\users\aya_a_000\lab1\variables.c
+	"variables.h"
+
+1506758122 c:\users\aya_a_000\lab1\variables.h
+
+1506760188 source:c:\users\aya_a_000\lab1\command.c
+	"command.h"
+
+1506757787 c:\users\aya_a_000\lab1\command.h
+
+1507052705 source:c:\users\aya_a_000\lab1\environment.c
+	"environment.h"
+	"stdio.h"
+	"stdlib.h"
+
+1507161968 source:/home/aya/Desktop/Projects/Lab1/command.c
+	"command.h"
+	<stdio.h>
+	"stdlib.h"
+	<string.h>
+	<stdbool.h>
+
+1507161678 /home/aya/Desktop/Projects/Lab1/command.h
+	<stdbool.h>
+
+1507162105 source:/home/aya/Desktop/Projects/Lab1/command_parser.c
+	"command_parser.h"
+	<stdio.h>
+	"stdlib.h"
+	<string.h>
+	"environment.h"
+	<stdbool.h>
+	"command.h"
+
+1507161130 /home/aya/Desktop/Projects/Lab1/command_parser.h
+
+1507135715 /home/aya/Desktop/Projects/Lab1/environment.h
+
+1507136850 source:/home/aya/Desktop/Projects/Lab1/environment.c
+	"stdio.h"
+	"stdlib.h"
+	<stdbool.h>
+
+1507135162 source:/home/aya/Desktop/Projects/Lab1/environment.cpp
+
+1507131680 source:/home/aya/Desktop/Projects/Lab1/file_processing.c
+	"file_processing.h"
+	"stdio.h"
+
+1507131680 /home/aya/Desktop/Projects/Lab1/file_processing.h
+	"stdio.h"
+
+1507162163 source:/home/aya/Desktop/Projects/Lab1/main.c
+	"stdio.h"
+	"stdlib.h"
+	"file_processing.h"
+	<string.h>
+	"environment.h"
+	"command_parser.h"
+
+1507159624 source:/home/aya/Desktop/Projects/Lab1/variables.c
+	"variables.h"
+	<stdbool.h>
+	<stdio.h>
+	"stdlib.h"
+	<string.h>
+
+1507131680 /home/aya/Desktop/Projects/Lab1/variables.h
+
+1507135205 /home/aya/Desktop/Projects/Lab1/environment.c
+	"stdio.h"
+	"stdlib.h"
+
