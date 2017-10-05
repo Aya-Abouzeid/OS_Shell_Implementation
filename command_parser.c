@@ -20,11 +20,12 @@ int i;
 bool background = false;
 void write_history(char* text);
 void get_history();
+int words_length;
 char* concat2(char* first, char* second);
-void parse_command( const char* command )
+bool parse_command( const char* command )
 {
 	// you should implement this function
-
+bool x = true;
 	  max_length = get_max_length();
 	  i = 0;
       while (command[i] != '\0' && (command[i] == ' ' || command[i] == '\t')){
@@ -43,54 +44,56 @@ void parse_command( const char* command )
 
             split_line(command);
             is_background();
-            determine_command();
+           x= determine_command();
 
 		}
-
+return x;
 }
 void split_line( const char* command )
 {
 
-    index2=0;
-    words_index = 0;
+    int index2=0;
+    int words_index = 0;
+            temp_index = 0;
+        words[words_index] = malloc(513);
+
     while(command[index2] != '\0' && command[index2] != '\n'){
-        temp_index = 0;
-        words[words_index] = malloc(temp_index +1);
 
-            while(command[index2]!= '\t' && command[index2]!= ' ' && command[index2] != '\0'){
+            if(command[index2]!= '\t' && command[index2]!= ' ' && command[index2] != '\0'){
+
                                  words[words_index][temp_index] = command[index2];
+
                                  temp_index++;
-                                 words[words_index] = realloc(words[words_index], temp_index+1);
+                                 index2++;
 
-                     if(command[index2+1]  == ' ' || command[index2+1] == '\t'){
-
-                                  words[words_index][temp_index]  = '\0';
-                                  words_index++;
-                                  temp_index++;
-                                  index2++;
-                    }
-                     else if(command[index2+1]  != '\0'){
-
-                                  index2++;
-                    }
-                    else {
-                                 words[words_index][temp_index]  = '\0';
-                                 words_index++;
-                                 temp_index++;
-                                 break;
-                    }
             }
-             index2++;
-} }
+            else {
+                while (command[index2] == ' ' || command[index2] == '\t')
+                            index2++;
+                            if(command[index2+1]  != '\0'){
+                      words_index++;
+                              temp_index = 0;
+                        words[words_index] = malloc(513);
+}
+
+
+                if (command[index2]  == '\0') {
+                    words[words_index][temp_index]  = '\0';
+                }
+            }
+
+    }
+    words_length = words_index+ 1;
+}
 
 
 void is_background(){
-	if (words_index > 1 && strcmp(words[words_index - 1], "&") == 0) {
+	if (words_length > 1 && strcmp(words[words_length - 1], "&") == 0) {
 		background = true;
-		words_index--;
-	}else if( words_index > 1 && words[words_index-1][strlen(words[words_index-1])-1] == '&'){
+		words_length--;
+	}else if( words_length > 1 && words[words_length-1][strlen(words[words_length-1])-1] == '&'){
 		background = true;
-		words[words_index-1][strlen(words[words_index-1])-1]= '\0';
+		words[words_length-1][strlen(words[words_length-1])-1]= '\0';
 
 	}
 
@@ -115,25 +118,26 @@ char* concat2(char* first, char* second) {
 	return concatenated;
 }
 
-void determine_command(){
-
+bool determine_command(){
+bool x = true;
     if(strcmp(words[0] ,"cd") == 0){
-        cd( words,words_index, background );
+        cd( words,words_length, background );
     }
     else if(strcmp(words[0] ,"echo") == 0){
-        echo( words ,words_index, background );
+        echo( words ,words_length, background );
 
     }
-    else if(words_index == 1 && strcmp(words[0] ,"history") == 0){
+    else if(strcmp(words[0] ,"exit") == 0){
+x = false;
+    }
+    else if(words_length == 1 && strcmp(words[0] ,"history") == 0){
 
 get_history();
     }
     else {
-        execute_command(words ,words_index, background );
+        execute_command(words ,words_length, background , concat2(getenv("HOME"), "MyLog"));
     }
-
-
-
+return x;
 }
 
 void write_history(char* text){
@@ -181,7 +185,7 @@ char *get_words(){
     return words;
 }
 int get_words_index(){
-    return words_index;
+    return words_length;
 }
 bool get_background_bool(){
     return background;

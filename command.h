@@ -14,6 +14,6 @@ void cd( const char* words[], int words_length ,bool background  );
 */
 void echo( const char* words[] , int words_length ,bool background  );
 
-void execute_command(const char* words[] , int words_length ,bool background );
+void execute_command(const char* words[] , int words_length ,bool background, char* path );;
 
 #endif // COMMANDS_H_

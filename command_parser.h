@@ -1,5 +1,6 @@
 #ifndef COMMAND_PARSER_H   /* Include guard */
 #define COMMAND_PARSER_H
+#include <stdbool.h>
 
 /*
 	- This function should be responsible for importing all details of the command
@@ -11,10 +12,10 @@
 	- Best practice is to use helper function for each collection of logical instructions,
 	  example: function for splitting the command by space into array of strings, ..etc
 */
-void parse_command( const char* command );
+bool parse_command( const char* command );
 void split_line( const char* command );
 void is_background();
-void determine_command();
+bool determine_command();
 
 
 #endif // COMMAND_PARSER_H

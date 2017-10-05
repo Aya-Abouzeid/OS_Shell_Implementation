@@ -6,8 +6,8 @@
 #include <string.h>
 #include "environment.h"
 #include "command_parser.h"
+#include <stdbool.h>
 
-typedef enum{ false = 0 , true = 1 } bool ;
 FILE *file;
 FILE *log;
 FILE *history;
@@ -102,7 +102,8 @@ void shell_loop(bool input_from_file)
 
                     buffer[index1] = '\0';
                     if(index1 != 0 ) {
-                        parse_command(buffer);
+                        if(parse_command(buffer) == false)
+                        break;
                     }
                     free(buffer);
 

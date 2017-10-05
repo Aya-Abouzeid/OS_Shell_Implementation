@@ -42,7 +42,7 @@
 	"stdio.h"
 	"stdlib.h"
 
-1507223593 source:/home/aya/Desktop/Projects/Lab1/command.c
+1507239945 source:/home/aya/Desktop/Projects/Lab1/command.c
 	"command.h"
 	<stdio.h>
 	"stdlib.h"
@@ -54,10 +54,10 @@
 	<sys/types.h>
 	<sys/wait.h>
 
-1507189496 /home/aya/Desktop/Projects/Lab1/command.h
+1507226757 /home/aya/Desktop/Projects/Lab1/command.h
 	<stdbool.h>
 
-1507225083 source:/home/aya/Desktop/Projects/Lab1/command_parser.c
+1507236140 source:/home/aya/Desktop/Projects/Lab1/command_parser.c
 	"command_parser.h"
 	<stdio.h>
 	"stdlib.h"
@@ -67,7 +67,8 @@
 	"command.h"
 	"file_processing.h"
 
-1507161130 /home/aya/Desktop/Projects/Lab1/command_parser.h
+1507236188 /home/aya/Desktop/Projects/Lab1/command_parser.h
+	<stdbool.h>
 
 1507169146 /home/aya/Desktop/Projects/Lab1/environment.h
 
@@ -86,13 +87,14 @@
 1507223353 /home/aya/Desktop/Projects/Lab1/file_processing.h
 	"stdio.h"
 
-1507215932 source:/home/aya/Desktop/Projects/Lab1/main.c
+1507236196 source:/home/aya/Desktop/Projects/Lab1/main.c
 	"stdio.h"
 	"stdlib.h"
 	"file_processing.h"
 	<string.h>
 	"environment.h"
 	"command_parser.h"
+	<stdbool.h>
 
 1507172077 source:/home/aya/Desktop/Projects/Lab1/variables.c
 	"variables.h"

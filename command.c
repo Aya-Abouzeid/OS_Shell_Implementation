@@ -21,26 +21,30 @@ char *temp; // for reading words.
 bool path_boolean = false; //for end of lie
 int max_length = 512;
 int iter;
-
-char* concat(char* first, char* second);
+char* logPath;
+  char* words2[];
+void concat(char* second);
+void signal_log();
 void cd(const char* words[], int words_length ,bool background  )
 {
 	if (words_length == 1 || strcmp(words[1], "~") == 0) {
 
             done = chdir(getenv("HOME"));
+//            getcwd(project_directory, sizeof(project_directory));
+//		    printf(">>> %s \n",project_directory );
 
 
 	} else if(words_length == 2 ){
             done = chdir(words[1]);
-            getcwd(project_directory, sizeof(project_directory));
-		    printf(">>> %s \n",project_directory );
+//            getcwd(project_directory, sizeof(project_directory));
+//		    printf(">>> %s \n",project_directory );
 	}
 	else {
-            perror("Error");
+printf("ERROR: Directory Not Found");
 	}
 
 	if(done != 0) {
-            perror("Error");
+printf("ERROR: Directory Not Found");
 	}
 
 }
@@ -83,55 +87,56 @@ void echo(const char* words[] , int words_length ,bool background )
 
 }
 
-void execute_command(const char* words[] , int words_length ,bool background ){
+void execute_command(const char* words[] , int words_length ,bool background ,char* fileName ){
         char* x = words[0];
     char* array = words;
+    logPath = fileName;
 split_path();
-//printf(">>>>>> %s \n" , path_array[0]);
-//printf(">>>>>> %s \n" , path_array[1]);
-//printf(">>>>>> %s \n" , path_array[2]);
-//printf(">>>>>> %s \n" , path_array[3]);
-//printf(">>>>>> %s \n" , path_array[4]);
-//printf(">>>>>> %s \n" , path_array[5]);
-//printf(">>>>>> %s \n" , path_array[6]);
-//printf(">>>>>> %s \n" , path_array[7]);
-//printf(">>>>>> %s \n" , path_array[8]);
+  int k;
+char* z[iter];
+for(k=0 ; k<iter; k++){
+//printf(">>>>>>>>%s \n" , path_array[k]);
+//                                                                            printf(">>>>>>>>%s \n" , x);
+ z[k] = malloc(strlen(path_array[k]) + strlen(x) );
+                                strcpy(z[k],path_array[k]);
+                                strcat(z[k],x);
 
 
-	char* temp;
-	temp = malloc(512);
+}
+
+
+
 	words[words_length] = NULL;
 	int i = 0;
 	bool done = false;
 	char* command;
+    signal(SIGCHLD,signal_log);
     int status;
-    int required = -1;
     siginfo_t childstat;
+                                                                                printf(">>>>>>>>%s \n" , x);
+
     pid_t pid = fork();
 
         if (pid == 0) {
+//    printf("heeeeeeeeere");
 
                 while(i <iter){
 
-                       command = concat(path_array[i] , x);
+                        if(execv(x, words) != -1){
+                                    done = true;
+                                        break;
 
-FILE *file;
-    file = fopen(command, "r");
-    if (file != NULL) {
-        required = i;
-    }
-    i++;
-                                                printf(" i = %d \n" , i);
-                                            printf("iter = %d \n" , iter);
+                        }
+                       else if (execv(z[i], words) != -1) {
+                        done = true;
+                                        break;
 
+                                        }
+
+
+i++;
 }
-                                            printf("%d \n" , required);
 
-//                            if ( required > -1){
-//                            execv(command, array);
-//                            printf("heeeeeere");
-//
-//                                }
 //
 //               else if (done == false){
 //
@@ -139,14 +144,14 @@ FILE *file;
 //                }
 //                                                            printf("heeeeeere222");
 //
-//                exit(0);
+                exit(0);
         }else if(pid>0)
             {
+                if (background == false) {
+                    waitpid(pid, &status ,0);
 
-                    waitid(P_PID,pid, &childstat ,WEXITED);
-
-        printf("%d \n" , pid);
-
+        printf("> %d \n" , pid);
+}
             }
 
         else {
@@ -158,7 +163,21 @@ return;
 
 }
 
+void signal_log(){
 
+
+FILE *log = fopen(logPath, "a");
+    if(log!=NULL)
+    {
+        fprintf(log, "Child process was terminated \n");
+        fclose(log);
+    }
+    else
+    {
+        printf("%s\n", " ERROR : cann't open log file");
+    }
+
+}
 void split_path(){
 
 char* path =  getenv("PATH");
@@ -171,36 +190,61 @@ int j;
 for (j = 0; path[j] != '\0'; j++) {
 		if (path[j] != ':') {
 
-path_array[size][index2] = path[j];
+            path_array[size][index2] = path[j];
 			index2++;
 
 		} else {
-        path_array[size][index2]='/';
-index2++;
+            path_array[size][index2]='/';
+            index2++;
 			path_array[size][index2] = '\0';
+
 			size++;
 			path_array[size] = malloc(513);
 			index2 = 0;
 		}
 
 	}
+	            path_array[size][index2]='/';
+
 	size++;
 	iter = size;
 
 }
-char* concat(char* first, char* second) {
-	char* concatenated = malloc(strlen(first) + strlen(second) - 1);
-	int index =0;
-	int i = 0;
+void concat(  char* second) {
+//int k;
+//  for( k=0 ; k< iter ; k++){
+//  					printf("%s \n" , path_array[k]);
+//
+//  }
+char* concatenated;
 
-	for (index ; first[index] != '\0'; index++){
-		concatenated[i++] = first[index];
+
+	//concatenated= malloc(strlen(first) + strlen(second) - 1);
+
+
+	int i = 0;
+while(i< iter){
+int index =0;
+		int index2 =0;
+		printf(">>>>>> %d \n" , i);
+
+				printf(" >> %s concat \n" , path_array[i]);
+
+	for (index ; path_array[i][index] != '\0'; index++){
+
 		}
-		index =0;
-	for (index; second[index] != '\0'; index++) {
-		concatenated[i++] = second[index];
+
+	for (index2; second[index2] != '\0'; index2++) {
+		path_array[i][index] = second[index2];
+		index++;
+
 	}
-	concatenated[i] = '\0';
-	//printf("%s <<< concat \n" , concatenated);
-	return concatenated;
+	path_array[index] = '\0';
+		printf("%s <<<<<<<<<<<<< concat \n" , path_array[i]);
+
+	i++;
+	}
+	//printf("%s <<< concat \n" , concatenated[y]);
+
+
 }
