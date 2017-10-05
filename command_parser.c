@@ -5,6 +5,7 @@
 #include "environment.h"
 #include <stdbool.h>
 #include "command.h"
+#include "file_processing.h"
 
 
 
@@ -17,6 +18,9 @@ int max_length;
 bool line_boolean = false; //for end of lie
 int i;
 bool background = false;
+void write_history(char* text);
+void get_history();
+char* concat2(char* first, char* second);
 void parse_command( const char* command )
 {
 	// you should implement this function
@@ -29,6 +33,8 @@ void parse_command( const char* command )
                 return;
             }
        }
+
+       write_history(command);
        if(strlen(command) > 512){
 
 		    printf("Command Length Exceeded!");
@@ -90,6 +96,25 @@ void is_background(){
 
 }
 
+
+char* concat2(char* first, char* second) {
+	char* concatenated = malloc(strlen(first) + strlen(second) - 1);
+	int index =0;
+	int i = 0;
+
+	for (index ; first[index] != '\0'; index++){
+		concatenated[i++] = first[index];
+		}
+		concatenated[i++] = '/';
+		index =0;
+	for (index; second[index] != '\0'; index++) {
+		concatenated[i++] = second[index];
+	}
+	concatenated[i] = '\0';
+	//printf("%s <<< concat \n" , concatenated);
+	return concatenated;
+}
+
 void determine_command(){
 
     if(strcmp(words[0] ,"cd") == 0){
@@ -99,12 +124,58 @@ void determine_command(){
         echo( words ,words_index, background );
 
     }
+    else if(words_index == 1 && strcmp(words[0] ,"history") == 0){
+
+get_history();
+    }
     else {
         execute_command(words ,words_index, background );
     }
 
 
 
+}
+
+void write_history(char* text){
+
+ char* h= concat2(getenv("HOME"), "MyHistory");
+
+FILE *history = fopen(h, "a");
+    if(history!=NULL)
+    {
+        fprintf(history, "%s \n", text);
+        fclose(history);
+    }
+    else
+    {
+        printf("%s\n", " ERROR : cann't open history file");
+    }
+
+}
+void get_history()
+{
+    char command[513];
+		char* h= concat2(getenv("HOME"), "MyHistory");
+		    FILE* history = fopen(h, "r");
+
+if (history == NULL)
+        printf("%s\n", "No History");
+    else
+    {
+        while (fgets(command, 513, history))
+            printf("%s", command);
+        fclose(history);
+    }
+//FILE* history = fopen(h, "r");
+//	char text[513];
+//	if (history == NULL) {
+//		printf("No History\n");
+//	}else {
+//	while (fgets(text, 513, history) != NULL) {
+//		printf("%s \n ", text);
+//	}
+//fclose(history);
+//}
 }
 char *get_words(){
     return words;

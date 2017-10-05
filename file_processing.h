@@ -9,6 +9,8 @@
 void open_history_file();
 FILE *get_history_file();
 void close_history_file();
+void get_history();
+void write_history(char* text);
 
 /*
 	log file basic functions' prototypes

@@ -13,10 +13,14 @@ FILE *log;
 FILE *history;
 int maxLength;
 const char* path;
+  char *line = NULL;
+
 const char* home;
+int bufsize = 1024;
+char *buffer;  //buffer for 1024 characters
 char c; //for reading new lines
 int index1; // for index in newline
-char *s; //of dynamic size to read command with unknown length
+ //of dynamic size to read command with unknown length
 void start_shell(bool read_from_file);
 void shell_loop(bool input_from_file);
 int main(int argc, char *argv[])
@@ -74,29 +78,33 @@ void shell_loop(bool input_from_file)
     		// if end of file {from_file = false; continue;}
 		}
 		else{
-			//read next instruction from console
-                s = malloc(1);
+
+			buffer = malloc(sizeof(char) * bufsize);
                 index1 =0;
                 printf("\n Shell> ");
 
 
                      while((c = getchar()) != '\n' && c != EOF)
                     {
-                                    //   printf(" \n %d %c" ,index1, c);
 
-                       s[index1] = c;
+                       buffer[index1] = c;
 
-                   //    printf(" \n %c" , s[index1]);
 
                        index1++;
-                       s = realloc(s, index1+1); // Add space for another character to be read.
+
+                       if (index1 >= bufsize) {
+                      bufsize += 1024;
+                      buffer = realloc(buffer, bufsize);
+
+                      }
+
                     }
 
-                s[index1] = '\0';
+                    buffer[index1] = '\0';
                     if(index1 != 0 ) {
-                        parse_command(s);
+                        parse_command(buffer);
                     }
-                free(s);
+                    free(buffer);
 
 
 		}
