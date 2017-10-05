@@ -13,5 +13,7 @@ void setup_environment( void );
 char* get_path();
 char* get_home();
 int get_max_length();
+char* get_path_array();
+char get_project_directory();
 
 #endif // ENVIRONMENT_H_

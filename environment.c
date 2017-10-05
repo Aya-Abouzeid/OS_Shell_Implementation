@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include <stdbool.h>
+#include "variables.h"
 
 const char* path;
 const char* home;
@@ -18,6 +19,8 @@ void setup_environment( void )
     // you should implement this function
     path= getenv("PATH");
     home= getenv("HOME");
+    set_variable("path" , path);
+    set_variable("home" , home);
     max_length = 512;
     getcwd(project_directory, sizeof(project_directory));
     split_path();
@@ -63,6 +66,10 @@ void split_path(){
 char* get_path(){
     return path;
 }
+char* get_path_array(){
+    return path_array;
+}
+
 char* get_home(){
     return home;
 }

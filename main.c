@@ -22,18 +22,20 @@ void shell_loop(bool input_from_file);
 int main(int argc, char *argv[])
 {
 
-     setup_environment();
-     path= get_path();
-     home= get_home();
-     maxLength = get_max_length();
+         setup_environment();
+         path= get_path();
+         home= get_home();
+         maxLength = get_max_length();
 
-    // any other early configuration should be here
-    if( argc > 1 ){
-        start_shell(true);
-    }
-    else{
-        start_shell(false);
-    }
+        if( argc > 1 ){
+            start_shell(true);
+        }
+        else{
+            start_shell(false);
+        }
+
+
+
 
     return 0;
 }
@@ -76,13 +78,20 @@ void shell_loop(bool input_from_file)
                 s = malloc(1);
                 index1 =0;
                 printf("\n Shell> ");
-                     while((c = getchar()) != '\n' )
-                    {
-                    printf(">>>>>>>...");
 
-                        s[index1++] = c;
-                        s = realloc(s, index1+1); // Add space for another character to be read.
+
+                     while((c = getchar()) != '\n' && c != EOF)
+                    {
+                                    //   printf(" \n %d %c" ,index1, c);
+
+                       s[index1] = c;
+
+                   //    printf(" \n %c" , s[index1]);
+
+                       index1++;
+                       s = realloc(s, index1+1); // Add space for another character to be read.
                     }
+
                 s[index1] = '\0';
                     if(index1 != 0 ) {
                         parse_command(s);
