@@ -6,8 +6,10 @@
 #include "environment.h"
 #include <signal.h>
 #include <unistd.h>
-#include<sys/types.h>
+#include <sys/types.h>
 #include <sys/wait.h>
+#include "variables.h"
+#include <ctype.h>
 
 
 //char* array[]; //for paths
@@ -49,32 +51,88 @@ printf("ERROR: Directory Not Found");
 
 }
 
+void exp(const char* words[], int words_length ,bool background  ){
+
+int length;
+if(words_length == 2) {
+
+int i;
+bool found = false;
+bool error = false;
+
+char* temp = malloc(513);
+memcpy(temp , words[1] , 513);
+ const char s[2] = "=";
+   char *token;
+
+   /* get the first token */
+   token = strtok(temp, s);
+
+   /* walk through other tokens */int q =0;
+   char* arr[2];
+   while( token != NULL ) {
+ arr[q] = token;
+      q++;
+      token = strtok(NULL, s);
+
+      }
+
+                if(strlen(arr[0]) != 0  && words[1][strlen(words[1])-1]== '=' ){
+                set_variable(arr[0] , "");
+                }
+                else if(strlen(arr[0]) != 0  && strcmp(arr[0] , words[1]) == 0 ){
+
+
+                set_variable(arr[0] , "");
+                }
+                else if(strlen(arr[0]) != 0 && strlen(arr[1]) != 0  ){
+
+                set_variable(arr[0] , arr[1] );
+                }else {
+
+                    perror("error");
+                    return;
+                }
+
+
+
+
+}
+else {
+                    printf("Error: Command not found");
+
+    }
+}
+
 
 void echo(const char* words[] , int words_length ,bool background )
 {
-
 
     if(words_length == 1) {
                 printf("\n");
 
     }
-    else if(words_length == 2 && words[1][0] == '&'){
+    else if( words_length == 2 && words[1][0] == '&'){
+
+                    printf("Error: Command not found");
+    }
+    else if(words_length == 2 && words[1][0] == '$'){
 
         char* var =   memmove(words[1], words[1]+1, strlen(words[1]));
+    char* j =lookup_variable(var);
+//    printf("%s \n" , j);
+            if(strcmp(j,"") != 0 ){
 
-
-            if(strcmp(lookup_variable(var),"") != 0 ){
-
-                     printf("%s" , lookup_variable(words));
+                     printf("%s" , j);
             }
             else {
-                     printf("\n");
+                    printf("\n");
 
-                     perror("Error");
 
             }
     }
-    else if( words_length == 2 && words[1][0] != '&'){
+    else if( words_length == 2 && words[1][0] != '$'){
+
                     printf("%s" , words[1]);
     }
     else{
@@ -95,8 +153,6 @@ split_path();
   int k;
 char* z[iter];
 for(k=0 ; k<iter; k++){
-//printf(">>>>>>>>%s \n" , path_array[k]);
-//                                                                            printf(">>>>>>>>%s \n" , x);
  z[k] = malloc(strlen(path_array[k]) + strlen(x) );
                                 strcpy(z[k],path_array[k]);
                                 strcat(z[k],x);
@@ -113,12 +169,9 @@ for(k=0 ; k<iter; k++){
     signal(SIGCHLD,signal_log);
     int status;
     siginfo_t childstat;
-                                                                                printf(">>>>>>>>%s \n" , x);
-
     pid_t pid = fork();
 
         if (pid == 0) {
-//    printf("heeeeeeeeere");
 
                 while(i <iter){
 
@@ -128,6 +181,7 @@ for(k=0 ; k<iter; k++){
 
                         }
                        else if (execv(z[i], words) != -1) {
+                       printf("%s" , z[i]);
                         done = true;
                                         break;
 
@@ -137,20 +191,15 @@ for(k=0 ; k<iter; k++){
 i++;
 }
 
-//
-//               else if (done == false){
-//
-//                perror("error");
-//                }
-//                                                            printf("heeeeeere222");
-//
+                if (done == false){
+        printf("ERROR: Invalid Command.");
+                }
+
                 exit(0);
         }else if(pid>0)
             {
                 if (background == false) {
                     waitpid(pid, &status ,0);
-
-        printf("> %d \n" , pid);
 }
             }
 

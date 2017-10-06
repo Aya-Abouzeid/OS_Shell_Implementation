@@ -8,13 +8,11 @@
 #include "command_parser.h"
 #include <stdbool.h>
 
-FILE *file;
-FILE *log;
-FILE *history;
+
 int maxLength;
 const char* path;
   char *line = NULL;
-
+char* batch_path;
 const char* home;
 int bufsize = 1024;
 char *buffer;  //buffer for 1024 characters
@@ -23,6 +21,7 @@ int index1; // for index in newline
  //of dynamic size to read command with unknown length
 void start_shell(bool read_from_file);
 void shell_loop(bool input_from_file);
+
 int main(int argc, char *argv[])
 {
 
@@ -31,7 +30,8 @@ int main(int argc, char *argv[])
          home= get_home();
          maxLength = get_max_length();
 
-        if( argc > 1 ){
+        if( argc == 2 ){
+        batch_path = argv[1];
             start_shell(true);
         }
         else{
@@ -50,9 +50,7 @@ void start_shell(bool read_from_file)
 
 
 	if(read_from_file){
-		// file processing functions should be called from here
-        open_commands_batch_file();
-        file = get_commands_batch_file();
+
         shell_loop(true);
 	}
 	else{
@@ -66,8 +64,34 @@ void shell_loop(bool input_from_file)
 
 	while(true){
 		if(from_file){
-			//read next instruction from file
-//char line[256];
+
+		char command[513];
+		char* h= batch_path;
+		    FILE* batch = fopen(h, "r");
+
+        if (batch == NULL) {
+		perror("Error opening file");
+		return;
+		}
+
+
+        while (fgets(command, 513, batch)) {
+        if (command[0] == '\n') {
+						continue;
+		}
+            printf("Command: %s", command);
+            int length = strlen(command);
+            if(command[length-1] = '\n')
+            command[length-1] = '\0';
+
+            write_history(command);
+            if(parse_command(command) == false)
+                        break;
+                        }
+            fclose(batch);
+    		 from_file = false;
+    		 continue;
+
 
   //  while (fgets(line, sizeof(line), file)) {
         /* note that fgets don't strip the terminating \n, checking its
@@ -75,7 +99,6 @@ void shell_loop(bool input_from_file)
       //  printf("%s", line);
     //}
 
-    		// if end of file {from_file = false; continue;}
 		}
 		else{
 

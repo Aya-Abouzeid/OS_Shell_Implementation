@@ -9,13 +9,14 @@ int max_length;
 char project_directory[1024];
 
 
-void setup_environment( void )
+void setup_environment( )
 {
     // you should implement this function
     path= getenv("PATH");
     home= getenv("HOME");
-    set_variable("path" , path);
-    set_variable("home" , home);
+
+    set_variable("PATH" , path);
+    set_variable("HOME" , home);
     max_length = 512;
     getcwd(project_directory, sizeof(project_directory));
 

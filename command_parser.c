@@ -62,19 +62,23 @@ void split_line( const char* command )
             if(command[index2]!= '\t' && command[index2]!= ' ' && command[index2] != '\0'){
 
                                  words[words_index][temp_index] = command[index2];
+                                   //      printf(">>%s \n",words[words_index]);
 
                                  temp_index++;
                                  index2++;
 
             }
             else {
-                while (command[index2] == ' ' || command[index2] == '\t')
+                while (command[index2] == ' ' || command[index2] == '\t'){
+
                             index2++;
-                            if(command[index2+1]  != '\0'){
+
+                            }
+                            if(command[index2]  != '\0'){
                       words_index++;
                               temp_index = 0;
                         words[words_index] = malloc(513);
-}
+                }
 
 
                 if (command[index2]  == '\0') {
@@ -88,6 +92,12 @@ void split_line( const char* command )
 
 
 void is_background(){
+background = false;
+ if( words_length == 1 && words[words_length-1][strlen(words[words_length-1])-1] == '&'){
+		background = true;
+		words[words_length-1][strlen(words[words_length-1])-1]= '\0';
+
+	}
 	if (words_length > 1 && strcmp(words[words_length - 1], "&") == 0) {
 		background = true;
 		words_length--;
@@ -114,7 +124,6 @@ char* concat2(char* first, char* second) {
 		concatenated[i++] = second[index];
 	}
 	concatenated[i] = '\0';
-	//printf("%s <<< concat \n" , concatenated);
 	return concatenated;
 }
 
@@ -125,6 +134,10 @@ bool x = true;
     }
     else if(strcmp(words[0] ,"echo") == 0){
         echo( words ,words_length, background );
+
+    }
+    else if(strcmp(words[0] ,"export") == 0){
+        exp( words ,words_length, background );
 
     }
     else if(strcmp(words[0] ,"exit") == 0){
@@ -170,16 +183,7 @@ if (history == NULL)
             printf("%s", command);
         fclose(history);
     }
-//FILE* history = fopen(h, "r");
-//	char text[513];
-//	if (history == NULL) {
-//		printf("No History\n");
-//	}else {
-//	while (fgets(text, 513, history) != NULL) {
-//		printf("%s \n ", text);
-//	}
-//fclose(history);
-//}
+
 }
 char *get_words(){
     return words;
