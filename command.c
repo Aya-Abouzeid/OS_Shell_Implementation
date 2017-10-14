@@ -1,17 +1,4 @@
 #include "command.h"
-<<<<<<< HEAD
-
-
-void cd( const char* path )
-{
-	// you should implement this function
-}
-
-
-void echo( const char* message )
-{
-	// you should implement this function
-=======
 #include <stdio.h>
 #include "stdlib.h"
 #include <string.h>
@@ -25,85 +12,166 @@ void echo( const char* message )
 #include <ctype.h>
 
 
-//char* array[]; //for paths
-char project_directory[1024];
 int done; // acts as a boolean for operation success
 char *path_array[]; // array for splitted path
 int index2; // for looping on path.
-int sentense_index; //for accessing the array
 int temp_index;
 char *temp; // for reading words.
-bool path_boolean = false; //for end of lie
+bool path_boolean = false; //for end of line
 int max_length = 512;
+char cwd2[1024];  //current working directory
 int iter;
 char* logPath;
-  char* words2[];
 void concat(char* second);
 void signal_log();
-void cd(const char* words[], int words_length ,bool background  )
+bool same_user; //for checking ~username command
+bool compare_user(const char* words[]);
+char *remove_quotes(char *string);
+void cd(const char* words[], int words_length ,bool background  ) //change directory function
 {
-	if (words_length == 1 || strcmp(words[1], "~") == 0) {
+    done =0;
 
-            done = chdir(getenv("HOME"));
-//            getcwd(project_directory, sizeof(project_directory));
-//		    printf(">>> %s \n",project_directory );
+	if (words_length == 1  || (strcmp(words[1], "~")) == 0) {
+
+            done = chdir(lookup_variable("HOME"));
 
 
-	} else if(words_length == 2 ){
+	}else if( words_length >= 2 && (strcmp(words[1], ".")) ==0 ){
+
+       }
+       else if( words_length >= 2 && (strcmp(words[1], "..")) ==0 ){
+            done = chdir(get_parent_path());
+       }
+       else if( words_length == 2 && words[1][0] == '$' ){
+            char* temp;
+            char s[2] = "$";
+             char* temp3 = malloc(513);
+             temp3 = memcpy(temp3 , words[1], 513);
+               char *splitter;
+               splitter = strtok(temp3, s);
+               while( splitter != NULL ) {   //splitting by '$'
+            temp = splitter;
+                  splitter = strtok(NULL, s);
+                  }
+
+            if(strcmp(lookup_variable( temp) ," " ) != 0){
+
+                               done = chdir(lookup_variable( temp) );
+
+                   }
+                   else {
+                   done =1;
+                   }
+
+       }
+
+	else if( words_length >= 2 && words[1][0]=='~' && words[1][0]=='/'){
+
+
+memmove(words[1], words[1]+1, strlen(words[1]));
+                   done = chdir(concat2( "/home",   memmove(words[1], words[1]+1, strlen(words[1]))));
+
+
+	}
+	else if(words_length >= 2 ){
+
             done = chdir(words[1]);
-//            getcwd(project_directory, sizeof(project_directory));
-//		    printf(">>> %s \n",project_directory );
+
 	}
 	else {
-printf("ERROR: Directory Not Found");
+
+printf("ERROR: directory not found\n");
 	}
 
 	if(done != 0) {
-printf("ERROR: Directory Not Found");
+printf("ERROR: directory not found\n");
 	}
 
 }
+bool compare_user(const char* words[]){
 
-void exp(const char* words[], int words_length ,bool background  ){
+char* temp1 = malloc(513) ;
+ char* temp3 = malloc(513);
+ temp3 = memcpy(temp3 , getenv("HOME"), 513);
 
-int length;
-if(words_length == 2) {
+ char s[2] = "/";
 
-int i;
-bool found = false;
-bool error = false;
-
-char* temp = malloc(513);
-memcpy(temp , words[1] , 513);
- const char s[2] = "=";
-   char *token;
-
-   /* get the first token */
-   token = strtok(temp, s);
-
-   /* walk through other tokens */int q =0;
-   char* arr[2];
-   while( token != NULL ) {
- arr[q] = token;
-      q++;
-      token = strtok(NULL, s);
-
+   char *splitter;
+   splitter = strtok(temp3, s);
+   while( splitter != NULL ) {   //splitting by '/'
+temp1 = splitter;
+      splitter = strtok(NULL, s);
       }
 
-                if(strlen(arr[0]) != 0  && words[1][strlen(words[1])-1]== '=' ){
+char* temp2 = malloc( 513 );
+                                strcpy(temp2,"~");
+                                strcat(temp2,temp1);
+free(temp3);
+
+
+      if(strcmp(words[1] ,temp2) ==0){
+
+         return true;
+      }
+
+      return false;
+
+}
+
+void exp(const char* words[], int words_length ,bool background  ){  //for executing export command
+
+if(words_length == 2) {
+
+
+bool error = true;
+
+char* quoted_string = malloc(513);
+memset(quoted_string , 0 ,sizeof(quoted_string));
+char* temp = malloc(513);
+memcpy(temp , words[1] , 513);
+
+int x = temp[0];
+int z =isalpha(x);
+
+if (z != 0){  //arguments key is a digit
+error = false;
+     }
+
+ const char s[2] = "=";
+   char *splitter;
+   splitter = strtok(temp, s);
+int q =0;
+   char* arr[2];
+   if(error == false){
+   while( splitter != NULL ) {   //splitting by '='
+ arr[q] = splitter;
+      q++;
+      splitter = strtok(NULL, s);
+
+      }
+      }
+
+      if(arr[1][0] =='"' && arr[1][strlen(arr[1])-1] == '"'){
+            quoted_string = remove_quotes(arr[1]);
+
+            set_variable(arr[0] , quoted_string);
+      }
+
+
+               else if(error == false && strlen(arr[0]) != 0  && words[1][strlen(words[1])-1]== '=' ){
+
+                set_variable(arr[0] , "");
+
+                }
+                else if(error == false && strlen(arr[0]) != 0  && strcmp(arr[0] , words[1]) == 0  ){
+
                 set_variable(arr[0] , "");
                 }
-                else if(strlen(arr[0]) != 0  && strcmp(arr[0] , words[1]) == 0 ){
-
-
-                set_variable(arr[0] , "");
-                }
-                else if(strlen(arr[0]) != 0 && strlen(arr[1]) != 0  ){
-
+                else if(error == false && strlen(arr[0]) != 0 && strlen(arr[1]) != 0 ){
                 set_variable(arr[0] , arr[1] );
-                }else {
 
-                    perror("error");
+                }else {
+                    printf("Error: Command not found");
                     return;
                 }
 
@@ -115,28 +183,42 @@ else {
                     printf("Error: Command not found");
 
     }
+
+
 }
 
 
-void echo(const char* words[] , int words_length ,bool background )
+char *remove_quotes(char *string){
+    char *text;
+ const char s[2] = "\"";
+   char *splitter;
+   splitter = strtok(string, s);
+   while( splitter != NULL ) {   //splitting by '='
+ text = splitter;
+      splitter = strtok(NULL, s);
+
+      }
+return text;
+
+}
+void echo(const char* words[] , int words_length ,bool background ) //executing echo command
 {
 
     if(words_length == 1) {
                 printf("\n");
 
     }
-    else if( words_length == 2 && words[1][0] == '&'){
+    else if( words_length >= 2 && words[1][0] == '&'){
 
-                    printf("Error: Command not found");
+                    printf("Error: Command not found\n");
     }
     else if(words_length == 2 && words[1][0] == '$'){
 
-        char* var =   memmove(words[1], words[1]+1, strlen(words[1]));
-    char* j =lookup_variable(var);
-//    printf("%s \n" , j);
+         memmove(words[1], words[1]+1, strlen(words[1]));
+        char* j =lookup_variable(words[1]);
             if(strcmp(j,"") != 0 ){
 
-                     printf("%s" , j);
+                     printf("%s\n" , j);
             }
             else {
                     printf("\n");
@@ -144,38 +226,46 @@ void echo(const char* words[] , int words_length ,bool background )
 
             }
     }
+
     else if( words_length == 2 && words[1][0] != '$'){
 
-                    printf("%s" , words[1]);
+                    printf("%s\n" , words[1]);
     }
     else{
        int i=1;
         for(i ; i< words_length ;i++){
-             printf("%s " , words[i]);
+             printf("%s\n " , words[i]);
         }
 
     }
 
 }
 
-void execute_command(const char* words[] , int words_length ,bool background ,char* fileName ){
-        char* x = words[0];
-    char* array = words;
-    logPath = fileName;
+void execute_command(const char* words[] , int words_length ,bool background ){
+
+        char* x =malloc(513) ;
+//= words[0];
+memset(x , 0 , sizeof(x));
+        strcpy(x, words[0]);
+
 split_path();
+
   int k;
 char* z[iter];
+printf("heeeeeeeeeeeeeeeere\n");
+
 for(k=0 ; k<iter; k++){
- z[k] = malloc(strlen(path_array[k]) + strlen(x) );
+
+ z[k] = malloc(strlen(path_array[k]) + strlen(x) +1);
                                 strcpy(z[k],path_array[k]);
                                 strcat(z[k],x);
 
-
-}
+}printf("heeeeeeeeeeeeeeeere2\n");
 
 
 
 	words[words_length] = NULL;
+
 	int i = 0;
 	bool done = false;
 	char* command;
@@ -190,29 +280,48 @@ for(k=0 ; k<iter; k++){
 
                         if(execv(x, words) != -1){
                                     done = true;
+
                                         break;
 
                         }
                        else if (execv(z[i], words) != -1) {
-                       printf("%s" , z[i]);
                         done = true;
                                         break;
 
                                         }
+
+                                      else
+                                      if(execve(x, words,NULL) != -1){
+        done = true;
+                                        break;
+
+        }
+      else if(execve(z[i], words,NULL) != -1){
+        done = true;
+
+                                        break;
+
+        }
 
 
 i++;
 }
 
                 if (done == false){
-        printf("ERROR: Invalid Command.");
+        printf("ERROR: Invalid Command.\n");
                 }
 
                 exit(0);
         }else if(pid>0)
             {
                 if (background == false) {
-                    waitpid(pid, &status ,0);
+//int status;
+//while( !WIFEXITED(status) && !WIFSIGNALED(status) ){
+//    waitpid(pid, &status, WUNTRACED);
+//
+//}
+waitpid(pid,status,0);
+
 }
             }
 
@@ -221,12 +330,19 @@ i++;
 perror("error");
 return;
         }
-
+        int m;
+         for (m = 0; m < iter; m++) {
+        free(z[m]);
+    }
+ for (m = 0; m < iter; m++) {
+        free(path_array[m]);
+    }
 
 }
 
 void signal_log(){
 
+logPath = concat2(getcwd(cwd2, sizeof(cwd2)) , "MyLog");
 
 FILE *log = fopen(logPath, "a");
     if(log!=NULL)
@@ -242,13 +358,14 @@ FILE *log = fopen(logPath, "a");
 }
 void split_path(){
 
-char* path =  getenv("PATH");
+char* path =  lookup_variable("PATH");
 
         int size =0;
     int index2=0;
             path_array[0] = malloc(513);
 
 int j;
+
 for (j = 0; path[j] != '\0'; j++) {
 		if (path[j] != ':') {
 
@@ -256,12 +373,14 @@ for (j = 0; path[j] != '\0'; j++) {
 			index2++;
 
 		} else {
+
             path_array[size][index2]='/';
             index2++;
 			path_array[size][index2] = '\0';
-
 			size++;
+
 			path_array[size] = malloc(513);
+
 			index2 = 0;
 		}
 
@@ -271,26 +390,15 @@ for (j = 0; path[j] != '\0'; j++) {
 	size++;
 	iter = size;
 
+
 }
 void concat(  char* second) {
-//int k;
-//  for( k=0 ; k< iter ; k++){
-//  					printf("%s \n" , path_array[k]);
-//
-//  }
-char* concatenated;
-
-
-	//concatenated= malloc(strlen(first) + strlen(second) - 1);
-
 
 	int i = 0;
 while(i< iter){
 int index =0;
 		int index2 =0;
-		printf(">>>>>> %d \n" , i);
 
-				printf(" >> %s concat \n" , path_array[i]);
 
 	for (index ; path_array[i][index] != '\0'; index++){
 
@@ -302,12 +410,9 @@ int index =0;
 
 	}
 	path_array[index] = '\0';
-		printf("%s <<<<<<<<<<<<< concat \n" , path_array[i]);
 
 	i++;
 	}
-	//printf("%s <<< concat \n" , concatenated[y]);
 
 
->>>>>>> 6dafcd10c0579dc0cf9e80d5b037528135dc0a40
 }
